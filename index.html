@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chatapp</title>
+    <style>
+        nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body{
+    background: linear-gradient(rgb(6, 190, 6,0.7),rgb(6, 190, 6,0.3));
+}
+
+.container {
+    max-width: 995px;
+    height: 75vh;
+    /* background: url(bg1.jpg); */
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: auto;
+    overflow-y: auto;
+    border: 0.5px solid green;
+    border-radius: 10px;
+}
+
+/* #messages{
+    margin: 12px 17px;
+    color: black;
+    font-weight: bold;
+    list-style: none;
+}
+
+#messages li{
+    background-color: white;
+    float: left;
+    clear: both;
+    width: 24%;
+    padding: 10px;
+    border-radius: 20px;
+    box-shadow: 10px 10px 20px;
+} */
+
+/* .messages{
+    width: 24%;
+    padding: 10px;
+    margin: 12px 17px;
+    border-radius: 20px;
+    color: black;
+    font-weight: bold;
+}
+
+.left{
+    background-color: white;
+    float: left;
+    clear: both;
+}
+
+.right{
+    background-color: greenyellow;
+    float: right;
+    clear: both;
+} */
+
+#form {
+    max-width: 10005px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#input {
+    width: 100vh;
+    height: 40px;
+    border: 2px solid black;
+    border-radius: 50px;
+    text-align:left;
+}
+
+button{
+    height: 40px;
+    width: 70px;
+    border: none;
+    border-radius: 13px;
+    background-color: rgb(100, 180, 100);
+    color: white;
+}
+
+button:hover{
+    background-color: rgb(130, 177, 130);
+}
+
+button:active{
+    color: rgb(100, 180, 100);
+    background-color: white;
+}
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <h2>ChatApp</h2>
+    </nav>
+
+    <hr>
+
+    <!-- <div class="container">
+        <div class="messages right">user1</div>
+        <div class="messages left">user2</div>
+    </div> -->
+
+    <div class="container">
+        <ul id="messages"></ul>
+    </div>
+    
+
+    <form id="form">
+        <input type="text" name="input" id="input" autocomplete="off">
+        <button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const form = document.getElementById('form');
+        const input = document.getElementById('input');
+        const messages = document.getElementById('messages')
+
+        const name = prompt("Enter Your Name: ");
+        socket.emit('user-connected',name);
+
+        socket.on('user-connected',(name)=>{
+            const person = document.createElement('li');
+            person.textContent = `${name} has joined`;
+            messages.appendChild(person);
+            window.scrollTo(0, document.body.scrollHeight);
+        })
+
+        form.addEventListener('submit',(e)=>{
+            e.preventDefault();
+            if(input.value){
+                socket.emit('send',input.value);
+                input.value = "";
+            }
+        })
+
+        socket.on('send',(data)=>{
+            const item = document.createElement('li')
+            item.style.listStyle = 'none';
+            item.textContent = `${data.name}: ${data.message}`;
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        })
+    </script>
+
+</body>
+
+</html>
